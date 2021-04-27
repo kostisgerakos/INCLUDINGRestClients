@@ -25,9 +25,10 @@ import gr.uoa.di.pcomp.IncludingRESTAPITest.postRequests.ReservationRequest;
 public class ReservationClient {
 
 	public static void main(String[] args) {
-		String target = "http://localhost:8181";
+		String target = "http://outlander4.di.uoa.gr:8181";
 		String getPath = "reservations";
 		String savePath = "saveReservation";
+		String setStatusPath = "setReservationStatus";
 		String validFrom = "2021-03-18 13:00:00";
 		String validUntil = "2021-03-18 13:55:00";
 		String username = "test";
@@ -35,9 +36,12 @@ public class ReservationClient {
 		Integer resourceId1 = 1;
 		Integer resourceId2 = 2;
 		Integer resourceId3 = 3;
+		Integer reservationId = 2;
+		Integer statusId = 3;
 		//uncomment depending get save update delete
 		//getReservation(target,getPpath,validFrom,validUntil);		
 		//saveReservation(target,savePath,validFrom,validUntil,username,testbedAreaId, Arrays.asList(new ReservationItemRequest(resourceId1),new ReservationItemRequest(resourceId2),new ReservationItemRequest(resourceId3)));
+		setReservationStatus(target,setStatusPath,reservationId,statusId);
 	}
 
 	protected static ClientConfig createClientConfig() {
@@ -66,5 +70,15 @@ public class ReservationClient {
 		Response response = invocationBuilder.post(Entity.entity(newReservation, MediaType.APPLICATION_JSON));
 		System.out.println(response.getStatus());
 		System.out.println(response.readEntity(String.class));
+	}
+	
+	private static void setReservationStatus(String target, String path, Integer reservationId, Integer statusId) {
+		
+		Client client = ClientBuilder.newClient(createClientConfig());
+		WebTarget webTarget = client.target(target).path(path+"/"+reservationId+"/"+statusId);
+		Invocation.Builder invocationBuilder = webTarget.request(MediaType.APPLICATION_JSON);
+		Response response = invocationBuilder.put(Entity.entity( "", MediaType.APPLICATION_JSON));
+		System.out.println(response.getStatus());
+
 	}
 }
