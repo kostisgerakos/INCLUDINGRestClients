@@ -26,24 +26,34 @@ public class ReservationClient {
 
 	public static void main(String[] args) {
 		String target = "http://localhost:8181";
+		
 		String getPath = "reservations";
 		String savePath = "saveReservation";
 		String setStatusPath = "setReservationStatus";
 		String deletePath = "deleteReservation";
-		String validFrom = "2021-03-18 13:00:00";
-		String validUntil = "2021-03-18 13:55:00";
+		String editPath = "editReservation";
+
+		String validFrom = "2021-04-18 13:00:00";
+		String validUntil = "2021-04-18 13:55:00";
+		
 		String username = "test";
+		
 		Integer testbedAreaId = 1;
+		
 		Integer resourceId1 = 1;
 		Integer resourceId2 = 2;
 		Integer resourceId3 = 3;
+		
 		Integer reservationId = 2;
+		
 		Integer statusId = 3;
 		//uncomment depending get save update delete
 		//getReservation(target,getPpath,validFrom,validUntil);		
 		//saveReservation(target,savePath,validFrom,validUntil,username,testbedAreaId, Arrays.asList(new ReservationItemRequest(resourceId1),new ReservationItemRequest(resourceId2),new ReservationItemRequest(resourceId3)));
 		//setReservationStatus(target,setStatusPath,reservationId,statusId);
-		deleteReservation(target,deletePath,reservationId);
+		//deleteReservation(target,deletePath,reservationId);
+		editReservation(target,editPath,reservationId,validFrom,validUntil,username,testbedAreaId, Arrays.asList(new ReservationItemRequest(resourceId1),new ReservationItemRequest(resourceId2),new ReservationItemRequest(resourceId3)));
+
 	}
 
 	protected static ClientConfig createClientConfig() {
@@ -70,6 +80,22 @@ public class ReservationClient {
 		newReservation.setReservationItems(reservationItems);
 		Invocation.Builder invocationBuilder = webTarget.request(MediaType.APPLICATION_JSON);
 		Response response = invocationBuilder.post(Entity.entity(newReservation, MediaType.APPLICATION_JSON));
+		System.out.println(response.getStatus());
+		System.out.println(response.readEntity(String.class));
+	}
+	
+	private static void editReservation( String target, String path, Integer reservationId, String validFrom, String validUntil, String username, Integer testbedAreaId, List<ReservationItemRequest> reservationItems) {
+		Client client = ClientBuilder.newClient(createClientConfig());
+		WebTarget webTarget = client.target(target).path(path);
+		ReservationRequest editedReservation = new ReservationRequest();
+		editedReservation.setReservationId(reservationId);
+		editedReservation.setUsername(username);
+		editedReservation.setTestbedAreaId(testbedAreaId);
+		editedReservation.setValidFrom(validFrom);
+		editedReservation.setValidUntil(validUntil);
+		editedReservation.setReservationItems(reservationItems);
+		Invocation.Builder invocationBuilder = webTarget.request(MediaType.APPLICATION_JSON);
+		Response response = invocationBuilder.put(Entity.entity(editedReservation, MediaType.APPLICATION_JSON));
 		System.out.println(response.getStatus());
 		System.out.println(response.readEntity(String.class));
 	}
